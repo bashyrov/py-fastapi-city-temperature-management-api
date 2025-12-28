@@ -2,7 +2,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from database.engine import Base
 
-from sqlalchemy import Integer, String
+from sqlalchemy import String
 
 
 class City(Base):
