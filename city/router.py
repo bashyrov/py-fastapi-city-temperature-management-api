@@ -1,17 +1,17 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 from sqlalchemy.orm import Session
 from dependencies import get_db
-from city.schemas import CityCreate, City
+from city.schemas import CityCreate, CityRead
 from city.crud import create_city, delete_city, get_cities_list
 
 router = APIRouter(prefix="/cities", tags=["cities"])
 
-@router.post("/create", response_model=City)
+@router.post("/create", response_model=CityRead)
 def create_city_endpoint(city: CityCreate, db: Session = Depends(get_db)):
     return create_city(db, city)
 
 
-@router.delete("/{city_id}", response_model=City)
+@router.delete("/{city_id}", response_model=CityRead)
 def delete_city_endpoint(city_id: int, db: Session = Depends(get_db)):
     result = delete_city(db, city_id)
     if not result:
