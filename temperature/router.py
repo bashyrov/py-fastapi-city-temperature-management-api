@@ -10,15 +10,15 @@ router = APIRouter(prefix="/temperatures", tags=["temperatures"])
 def read_temperatures(db: Session = Depends(get_db)):
     return get_temperatures_list(db)
 
-@router.delete("/{city_id}", response_model=TemperatureRead)
+@router.get("/{city_id}", response_model=TemperatureRead)
 def retrieve_temperature_for_single_city_endpoint(city_id: int, db: Session = Depends(get_db)):
-    result = get_temperature_by_city_id(db, city_id)
-    if not result:
+    city_data = get_temperature_by_city_id(db, city_id)
+    if not city_data:
         raise HTTPException(
             status_code=404,
             detail="City not found"
         )
-    return result
+    return city_data
 
 
 @router.post("/create", response_model=TemperatureRead)
