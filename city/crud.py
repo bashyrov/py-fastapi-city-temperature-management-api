@@ -1,7 +1,5 @@
-from typing import List
-
 from sqlalchemy.orm import Session
-import schemas
+from city import schemas
 from city.models import City
 
 
