@@ -12,6 +12,7 @@ class TemperatureBase(BaseModel):
 class TemperatureCreate(TemperatureBase):
     pass
 
+
 class TemperatureRead(TemperatureBase):
     id: int
 

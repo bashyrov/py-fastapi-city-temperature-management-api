@@ -9,6 +9,7 @@ class CityBase(BaseModel):
 class CityCreate(CityBase):
     pass
 
+
 class CityRead(CityBase):
     id: int
 
