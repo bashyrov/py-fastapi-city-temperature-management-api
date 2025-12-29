@@ -9,23 +9,19 @@ from temperature.crud import (create_temperatures,
 router = APIRouter(prefix="/temperatures", tags=["temperatures"])
 
 
-@router.get("/")
-def read_temperatures(db: Session = Depends(get_db)):
-    return get_temperatures_list(db)
-
-
-@router.get("/", response_model=list[TemperatureRead])
-def retrieve_temperature_for_single_city_endpoint(
+@router.get("/", response_model=list[TemperatureRead] | TemperatureRead)
+def read_temperatures(
         city_id: int = Query(..., description="ID міста"),
-        db: Session = Depends(get_db)
-):
-    city_data = get_temperature_by_city_id(db, city_id)
-    if not city_data:
-        raise HTTPException(
-            status_code=404,
-            detail="City not found"
-        )
-    return city_data
+        db: Session = Depends(get_db)):
+    if city_id:
+        city_data = get_temperature_by_city_id(db, city_id)
+        if not city_data:
+            raise HTTPException(
+                status_code=404,
+                detail="City not found"
+            )
+        return city_data
+    return get_temperatures_list(db)
 
 
 @router.post("/create", response_model=TemperatureRead)
