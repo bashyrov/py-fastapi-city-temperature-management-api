@@ -12,7 +12,7 @@ def create_city_endpoint(city: CityCreate, db: Session = Depends(get_db)):
     return create_city(db, city)
 
 
-@router.delete("/{city_id}", response_model=CityRead)
+@router.delete("/{city_id}")
 def delete_city_endpoint(city_id: int, db: Session = Depends(get_db)):
     result = delete_city(db, city_id)
     if not result:

@@ -27,6 +27,7 @@ def retrieve_temperature_for_single_city_endpoint(
         )
     return city_data
 
+
 @router.post("/create", response_model=TemperatureRead)
 def create_temperature_endpoint(
         temperature: TemperatureCreate,
@@ -35,7 +36,7 @@ def create_temperature_endpoint(
     return create_temperatures(db, temperature)
 
 
-@router.post("/update", response_model=TemperatureRead)
+@router.post("/update")
 async def update_temperature_endpoint(db: Session = Depends(get_db)):
     result = await update_temperature_for_all_cities(db)
     if not result:
