@@ -76,10 +76,10 @@ async def update_temperature_for_all_cities(
     async with httpx.AsyncClient(timeout=10) as client:
         tasks = [
             fetch_temperature_for_city(client, city_name)
-            for city_name, city_id in cities_list
+            for city_id, city_name in cities_list
         ]
         results = await asyncio.gather(*tasks)
-
+    print("Result:", results)
     for city_name, temp in results:
         if temp is None:
             continue
