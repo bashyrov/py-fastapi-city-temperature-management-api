@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Response
+from fastapi import APIRouter, Depends, HTTPException, status, Response, Query
 from sqlalchemy.orm import Session
 from dependencies import get_db
 from temperature.schemas import TemperatureRead, TemperatureCreate
@@ -14,9 +14,9 @@ def read_temperatures(db: Session = Depends(get_db)):
     return get_temperatures_list(db)
 
 
-@router.get("/{city_id}", response_model=TemperatureRead)
+@router.get("/", response_model=list[TemperatureRead])
 def retrieve_temperature_for_single_city_endpoint(
-        city_id: int,
+        city_id: int = Query(..., description="ID міста"),
         db: Session = Depends(get_db)
 ):
     city_data = get_temperature_by_city_id(db, city_id)
@@ -26,7 +26,6 @@ def retrieve_temperature_for_single_city_endpoint(
             detail="City not found"
         )
     return city_data
-
 
 @router.post("/create", response_model=TemperatureRead)
 def create_temperature_endpoint(

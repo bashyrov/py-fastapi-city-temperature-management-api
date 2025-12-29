@@ -1,5 +1,6 @@
 import asyncio
 import datetime
+from typing import Type
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -31,12 +32,12 @@ def create_temperatures(
 
 def get_temperature_by_city_id(
         db: Session, city_id: int
-) -> TemperatureRead | None:
+) -> list[Type[Temperature]] | None:
     return db.query(
         Temperature
     ).filter(
         Temperature.city_id == city_id
-    ).first()
+    ).all()
 
 
 async def fetch_temperature_for_city(
@@ -87,20 +88,11 @@ async def update_temperature_for_all_cities(
                 city_model.name == city
             ).first()
             if city_record:
-                temperature_record = db.scalar(
-                    select(Temperature).where(
-                        Temperature.city_id == city_record.id
-                    )
+                new_temp = Temperature(
+                    city_id=city_record.id,
+                    date_time=datetime.datetime.now(),
+                    temperature=temp
                 )
-                if temperature_record:
-                    temperature_record.temperature = temp
-                else:
-                    new_temp = Temperature(
-                        city_id=city_record.id,
-                        date_time=datetime.datetime.now(),
-                        temperature=temp
-                    )
-                    db.add(new_temp)
-
+                db.add(new_temp)
     db.commit()
     return True
