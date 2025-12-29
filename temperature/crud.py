@@ -55,6 +55,9 @@ async def fetch_temperature_for_city(
         response = await client.get(url, params=params)
         response.raise_for_status()
         data = response.json()
+        if not data.get("main") or "temp" not in data["main"]:
+            print(f"{city_name}: temperature data not found")
+            return city_name, None
         return city_name, data["main"]["temp"]
 
     except Exception as e:
