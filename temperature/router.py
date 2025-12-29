@@ -11,7 +11,7 @@ router = APIRouter(prefix="/temperatures", tags=["temperatures"])
 
 @router.get("/", response_model=list[TemperatureRead] | TemperatureRead)
 def read_temperatures(
-        city_id: int = Query(..., description="ID міста"),
+        city_id: int | None = Query(..., description="ID City to filter temperatures"),
         db: Session = Depends(get_db)):
     if city_id:
         city_data = get_temperature_by_city_id(db, city_id)
