@@ -7,7 +7,6 @@ from sqlalchemy.orm import Session
 import httpx
 from temperature import schemas
 from temperature.models import Temperature
-from temperature.schemas import TemperatureRead
 from city.models import City as city_model
 
 
@@ -63,12 +62,12 @@ async def fetch_temperature_for_city(
 
     except Exception as e:
         print(f"{city_name}: error {e}")
-        return None
+        return city_name, None
 
 
 async def update_temperature_for_all_cities(
         db: Session
-) -> Temperature | None:
+) -> bool | None:
     cities_list = db.scalars(
         select(city_model.name)
     ).all()
@@ -81,6 +80,7 @@ async def update_temperature_for_all_cities(
         results = await asyncio.gather(*tasks)
 
     for city, temp in results:
+        print(city, temp)
         if temp is not None:
             city_record = db.query(
                 city_model
