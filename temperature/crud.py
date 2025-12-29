@@ -68,31 +68,30 @@ async def fetch_temperature_for_city(
 async def update_temperature_for_all_cities(
         db: Session
 ) -> bool | None:
-    cities_list = db.scalars(
-        select(city_model.name)
+    cities_list = db.execute(
+        select(city_model.id, city_model.name)
     ).all()
+    city_map = {name: city_id for city_id, name in cities_list}
 
     async with httpx.AsyncClient(timeout=10) as client:
         tasks = [
-            fetch_temperature_for_city(client, city)
-            for city in cities_list
+            fetch_temperature_for_city(client, city_name)
+            for city_name, city_id in cities_list
         ]
         results = await asyncio.gather(*tasks)
 
-    for city, temp in results:
-        print(city, temp)
-        if temp is not None:
-            city_record = db.query(
-                city_model
-            ).filter(
-                city_model.name == city
-            ).first()
-            if city_record:
-                new_temp = Temperature(
-                    city_id=city_record.id,
-                    date_time=datetime.datetime.now(),
-                    temperature=temp
-                )
-                db.add(new_temp)
+    for city_name, temp in results:
+        if temp is None:
+            continue
+
+        city_id = city_map.get(city_name)
+        if city_id is None:
+            continue
+        new_temp = Temperature(
+            city_id=city_id,
+            date_time=datetime.datetime.now(),
+            temperature=temp
+        )
+        db.add(new_temp)
     db.commit()
     return True
