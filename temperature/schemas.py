@@ -4,7 +4,6 @@ from datetime import datetime
 
 class TemperatureBase(BaseModel):
     city_id: int
-    city_id: int
     date_time: datetime
     temperature: float
 
