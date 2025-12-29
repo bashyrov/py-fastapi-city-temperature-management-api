@@ -7,7 +7,7 @@ from city.crud import create_city, delete_city, get_cities_list
 router = APIRouter(prefix="/cities", tags=["cities"])
 
 
-@router.post("/create", response_model=CityRead)
+@router.post("/", response_model=CityRead)
 def create_city_endpoint(city: CityCreate, db: Session = Depends(get_db)):
     return create_city(db, city)
 
